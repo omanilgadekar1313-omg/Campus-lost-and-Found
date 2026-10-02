@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Lost & Found Portal - Web Edition</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Top Navigation Bar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </div>
+        <div>
+          <span class="brand-title">Campus Lost &amp; Found</span>
+          <span class="brand-sub">Centralized College Portal</span>
+        </div>
+      </div>
+
+      <nav class="nav-links">
+        <button class="nav-btn active" data-tab="dashboard">Dashboard</button>
+        <button class="nav-btn" data-tab="browse">Browse Catalog</button>
+        <button class="nav-btn" data-tab="matches">Smart Matches <span id="match-badge" class="badge">2</span></button>
+        <button class="nav-btn" data-tab="my-items">My Items</button>
+        <button class="nav-btn" id="admin-nav-btn" data-tab="admin" style="display: none;">Admin Console</button>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="btn btn-secondary" id="open-notif-btn" title="Notifications">
+          🔔 <span id="notif-count" class="badge">1</span>
+        </button>
+
+        <!-- Logged In Student Profile View -->
+        <div id="user-profile-badge" class="user-badge">
+          <div class="user-avatar" id="user-avatar-initials">AP</div>
+          <div class="user-info">
+            <span class="user-name" id="user-display-name">Aarav Patel</span>
+            <span class="user-role-tag" id="user-display-role">Student • Roll 2024CS042</span>
+          </div>
+          <button class="btn btn-logout" id="logout-btn" title="Sign out of student account">Logout</button>
+        </div>
+
+        <!-- Logged Out State: Student Login Button -->
+        <button class="btn btn-login" id="open-auth-btn" style="display: none;">
+          🎓 Student Login
+        </button>
+
+        <!-- Switcher for testing all roles -->
+        <div class="role-selector-wrap">
+          <select id="user-selector" class="user-select" title="Switch test profile">
+            <option value="aarav">🎓 Student: Aarav Patel</option>
+            <option value="priya">👩‍🏫 Staff: Prof. Priya</option>
+            <option value="admin">🛡️ Admin: Security Desk</option>
+          </select>
+        </div>
+
+        <button class="btn btn-primary" id="open-report-btn">
+          <span>+</span> Report Item
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-content">
+    
+    <!-- DASHBOARD VIEW -->
+    <section id="view-dashboard" class="tab-view active">
+      <div class="hero-card">
+        <div class="hero-text">
+          <div class="campus-tag">CAMPUS PROPERTY RECOVERY &amp; CLAIMS PORTAL</div>
+          <h1 id="welcome-text">Student Lost &amp; Found Portal</h1>
+          <p id="welcome-sub">Sign in with your student credentials to report lost personal belongings, deposit found items, and match claims with campus security.</p>
+          <div class="hero-actions">
+            <button class="btn btn-lost" onclick="openReportModal('lost')">🔍 Report Lost Item</button>
+            <button class="btn btn-found" onclick="openReportModal('found')">✅ Report Found Item</button>
+            <button class="btn btn-student-cta" id="hero-student-login-btn" onclick="openAuthModal('login')">🎓 Student Login / Register</button>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="security-box">
+            <div class="sec-icon">🛡️</div>
+            <div>
+              <strong>Campus Security Custody Desk</strong>
+              <p>Valuables (phones, wallets, laptops) are deposited at Room 102. Student ID verification is mandatory upon retrieval.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI Stats -->
+      <div class="kpi-grid">
+        <div class="kpi-card" onclick="switchTab('browse', 'lost')">
+          <div class="kpi-icon lost-icon">🔍</div>
+          <div>
+            <div class="kpi-value" id="stat-lost-count">3</div>
+            <div class="kpi-label">Active Lost Reports</div>
+          </div>
+        </div>
+        <div class="kpi-card" onclick="switchTab('browse', 'found')">
+          <div class="kpi-icon found-icon">📦</div>
+          <div>
+            <div class="kpi-value" id="stat-found-count">3</div>
+            <div class="kpi-label">Found Items Deposited</div>
+          </div>
+        </div>
+        <div class="kpi-card" onclick="switchTab('matches')">
+          <div class="kpi-icon match-icon">✨</div>
+          <div>
+            <div class="kpi-value" id="stat-match-count">2</div>
+            <div class="kpi-label">Potential Smart Matches</div>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon rec-icon">🎉</div>
+          <div>
+            <div class="kpi-value" id="stat-recovered-count">4</div>
+            <div class="kpi-label">Belongings Recovered</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dashboard Grid: Urgent Lost & Recent Found -->
+      <div class="dashboard-split">
+        <div class="split-col">
+          <div class="section-header">
+            <h2>🚨 Recently Lost by Students</h2>
+            <button class="text-btn" onclick="switchTab('browse', 'lost')">View All &rarr;</button>
+          </div>
+          <div id="dash-lost-list" class="cards-list"></div>
+        </div>
+
+        <div class="split-col">
+          <div class="section-header">
+            <h2>📦 Handed In &amp; Safe at Custody</h2>
+            <button class="text-btn" onclick="switchTab('browse', 'found')">View All &rarr;</button>
+          </div>
+          <div id="dash-found-list" class="cards-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BROWSE CATALOG VIEW -->
+    <section id="view-browse" class="tab-view">
+      <div class="catalog-header">
+        <div class="search-bar-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="catalog-search" placeholder="Search by item name, student notes, campus location..." autocomplete="off">
+          <button id="clear-search-btn" class="clear-btn">&times;</button>
+        </div>
+
+        <div class="filter-controls">
+          <div class="type-segmented">
+            <button class="seg-btn active" data-type="all">All Items (<span id="count-all">0</span>)</button>
+            <button class="seg-btn" data-type="lost">Lost (<span id="count-lost">0</span>)</button>
+            <button class="seg-btn" data-type="found">Found (<span id="count-found">0</span>)</button>
+          </div>
+
+          <div class="dropdown-filter">
+            <select id="location-filter">
+              <option value="">🏫 All Campus Locations</option>
+              <option value="Library">Library</option>
+              <option value="Cafeteria">Campus Cafeteria</option>
+              <option value="Auditorium">Main Auditorium</option>
+              <option value="Computer Lab">Computer Labs</option>
+              <option value="Sports">Sports Ground / Gym</option>
+              <option value="Room 304">Math / Classroom Block</option>
+              <option value="Hostel">Student Hostels</option>
+            </select>
+          </div>
+
+          <button class="btn btn-sm btn-secondary" id="toggle-recovered-btn" onclick="toggleShowRecovered()" title="Toggle display of recovered items">
+            Active Listings Only
+          </button>
+        </div>
+
+        <!-- Categories Pill Bar -->
+        <div class="categories-bar" id="categories-container"></div>
+      </div>
+
+      <div id="catalog-grid" class="items-grid"></div>
+    </section>
+
+    <!-- SMART MATCHES & CLAIMS VIEW -->
+    <section id="view-matches" class="tab-view">
+      <div class="sub-nav-tabs">
+        <button class="sub-tab active" data-subtab="sub-matches">✨ Automated Matches (<span id="sub-matches-count">0</span>)</button>
+        <button class="sub-tab" data-subtab="sub-claims">📋 Incoming Claims (<span id="sub-claims-count">0</span>)</button>
+        <button class="sub-tab" data-subtab="sub-myclaims">👤 My Filed Claims (<span id="sub-myclaims-count">0</span>)</button>
+      </div>
+
+      <div id="sub-matches" class="sub-content active">
+        <div class="info-alert">
+          <strong>Smart Matching Algorithm:</strong> Compares reported student lost belongings and custody deposits to recommend owner pairings with confidence scores.
+        </div>
+        <div id="matches-list" class="matches-grid"></div>
+      </div>
+
+      <div id="sub-claims" class="sub-content">
+        <div id="incoming-claims-list" class="claims-list"></div>
+      </div>
+
+      <div id="sub-myclaims" class="sub-content">
+        <div id="my-claims-list" class="claims-list"></div>
+      </div>
+    </section>
+
+    <!-- MY ITEMS VIEW -->
+    <section id="view-my-items" class="tab-view">
+      <div class="sub-nav-tabs">
+        <button class="sub-tab active" data-subtab="sub-my-lost">My Lost Reports (<span id="my-lost-count">0</span>)</button>
+        <button class="sub-tab" data-subtab="sub-my-found">My Found Deposits (<span id="my-found-count">0</span>)</button>
+      </div>
+
+      <div id="sub-my-lost" class="sub-content active">
+        <div id="my-lost-grid" class="items-grid"></div>
+      </div>
+
+      <div id="sub-my-found" class="sub-content">
+        <div id="my-found-grid" class="items-grid"></div>
+      </div>
+    </section>
+
+    <!-- ADMIN CONSOLE VIEW -->
+    <section id="view-admin" class="tab-view">
+      <div class="admin-header">
+        <div>
+          <h2>Campus Portal Administration</h2>
+          <p>System metrics, user directory, and item category management</p>
+        </div>
+        <button class="btn btn-secondary" onclick="openAddCategoryModal()">+ Add New Category</button>
+      </div>
+
+      <div class="admin-kpis">
+        <div class="kpi-card">
+          <div class="kpi-value" id="admin-rate">0%</div>
+          <div class="kpi-label">Campus Recovery Rate</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value" id="admin-users-count">3</div>
+          <div class="kpi-label">Registered Students &amp; Staff</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value" id="admin-total-items">6</div>
+          <div class="kpi-label">Total Catalog Items</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value" id="admin-pending-claims">1</div>
+          <div class="kpi-label">Pending Claim Verifications</div>
+        </div>
+      </div>
+
+      <div class="admin-tables-split">
+        <div class="admin-section">
+          <h3>👥 Registered College Users</h3>
+          <div class="table-container">
+            <table class="data-table" id="users-table">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Role</th>
+                  <th>Department / Class</th>
+                  <th>Email &amp; Contact</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="admin-section">
+          <h3>🏷️ Item Categories</h3>
+          <div id="admin-categories-list" class="cat-pill-list"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODALS -->
+
+  <!-- STUDENT AUTHENTICATION MODAL (LOGIN & SIGN UP) -->
+  <div id="modal-auth" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="auth-modal-title-wrap">
+          <div class="auth-icon-badge">🎓</div>
+          <div>
+            <h3 id="auth-title">Student Portal Login</h3>
+            <p id="auth-subtitle">Login with your college student ID to report lost or found items</p>
+          </div>
+        </div>
+        <button class="modal-close" onclick="closeModal('modal-auth')">&times;</button>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab-btn active" id="tab-btn-login" onclick="switchAuthTab('login')">Student Login</button>
+        <button class="auth-tab-btn" id="tab-btn-register" onclick="switchAuthTab('register')">New Student Sign Up</button>
+      </div>
+
+      <!-- Quick 1-Click Demo Login Banner -->
+      <div class="quick-student-demo-box">
+        <div>
+          <strong>⚡ Quick Student Demo Login</strong>
+          <p>Login instantly as Aarav Patel (Computer Science - TY BCS, Roll 2024CS042)</p>
+        </div>
+        <button type="button" class="btn btn-sm btn-primary" onclick="quickLoginAarav()">Instant Login</button>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <form id="student-login-form" class="modal-body auth-form-panel">
+        <div class="form-group">
+          <label>College Email or Student Roll Number *</label>
+          <input type="text" id="login-email" placeholder="e.g., aarav@campus.edu or 2024CS042" required autocomplete="username">
+        </div>
+
+        <div class="form-group">
+          <label>Password *</label>
+          <input type="password" id="login-password" placeholder="Enter your password" required autocomplete="current-password">
+        </div>
+
+        <div class="auth-actions">
+          <button type="submit" class="btn btn-primary btn-block">Sign In as Student</button>
+        </div>
+
+        <div class="auth-switch-text">
+          Don't have a student profile yet? 
+          <a href="javascript:void(0)" onclick="switchAuthTab('register')">Register your student account</a>
+        </div>
+      </form>
+
+      <!-- REGISTRATION FORM -->
+      <form id="student-register-form" class="modal-body auth-form-panel" style="display: none;">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Full Student Name *</label>
+            <input type="text" id="reg-name" placeholder="e.g., Rahul Deshmukh" required>
+          </div>
+          <div class="form-group">
+            <label>Student Roll No / PRN *</label>
+            <input type="text" id="reg-roll" placeholder="e.g., 2024CS089" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Department &amp; Class Year *</label>
+          <input type="text" id="reg-dept" placeholder="e.g., Computer Science - TY BCS or Mechanical - SY B.Tech" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>College Email Address *</label>
+            <input type="email" id="reg-email" placeholder="e.g., rahul@campus.edu" required autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label>Mobile Number (for Recovery Verification) *</label>
+            <input type="tel" id="reg-phone" placeholder="e.g., 9823456789" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Create Password *</label>
+          <input type="password" id="reg-password" placeholder="Create a password (min 4 characters)" minlength="4" required autocomplete="new-password">
+        </div>
+
+        <div class="auth-actions">
+          <button type="submit" class="btn btn-found btn-block">Register Student Account &amp; Proceed</button>
+        </div>
+
+        <div class="auth-switch-text">
+          Already registered? 
+          <a href="javascript:void(0)" onclick="switchAuthTab('login')">Sign in with your student ID</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Report Item Modal -->
+  <div id="modal-report" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="report-modal-title">Report Item to Portal</h3>
+        <button class="modal-close" onclick="closeModal('modal-report')">&times;</button>
+      </div>
+
+      <!-- Logged In Student Identity Card inside Report Modal -->
+      <div class="student-reporter-card" id="student-reporter-info">
+        <div class="student-reporter-icon">🎓</div>
+        <div>
+          <strong id="rep-student-name">Aarav Patel</strong>
+          <span id="rep-student-dept">Computer Science (TY BCS) • Roll 2024CS042</span>
+          <div class="rep-contact-line">📧 <span id="rep-student-email">aarav@campus.edu</span> • 📞 <span id="rep-student-phone">9876543210</span></div>
+        </div>
+      </div>
+
+      <form id="report-form" class="modal-body">
+        <div class="form-group">
+          <label>Type of Report *</label>
+          <div class="radio-toggle">
+            <label class="radio-label">
+              <input type="radio" name="reportType" value="lost" checked>
+              <span>🔍 Lost Belonging</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="reportType" value="found">
+              <span>📦 Found Item</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Item Name *</label>
+          <input type="text" id="form-item-name" placeholder="e.g., Titan Black Leather Wallet / Apple AirPods" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Category *</label>
+            <select id="form-category" required></select>
+          </div>
+          <div class="form-group">
+            <label>Date (YYYY-MM-DD) *</label>
+            <input type="date" id="form-date" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Campus Location *</label>
+          <input type="text" id="form-location" placeholder="e.g., Library 2nd Floor, Campus Cafeteria Table 4" required>
+          <div class="quick-locations">
+            <span onclick="setFormLocation('Library 2nd Floor')">+ Library</span>
+            <span onclick="setFormLocation('Campus Cafeteria')">+ Cafeteria</span>
+            <span onclick="setFormLocation('Main Auditorium')">+ Auditorium</span>
+            <span onclick="setFormLocation('Computer Lab 2')">+ Lab</span>
+            <span onclick="setFormLocation('Sports Ground')">+ Sports</span>
+          </div>
+        </div>
+
+        <div id="found-only-fields" style="display: none;">
+          <div class="form-group">
+            <label>Custody Storage Location *</label>
+            <input type="text" id="form-storage" value="Campus Security Desk (Room 102)" placeholder="Where is the item currently kept?">
+          </div>
+          <div class="form-group">
+            <label>Verification Question for Claimants</label>
+            <input type="text" id="form-question" placeholder="e.g., Name on ID card or lock screen wallpaper">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Contact Phone Number *</label>
+            <input type="tel" id="form-contact" required>
+          </div>
+          <div class="form-group" id="reward-group">
+            <label>Reward / Urgency Note (Optional)</label>
+            <input type="text" id="form-reward" placeholder="e.g., Important notes inside / reward offered">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Detailed Description *</label>
+          <textarea id="form-desc" rows="3" placeholder="Provide distinct characteristics, color, brand, stickers, contents..." required></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modal-report')">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="report-submit-btn">Submit Report</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Item Detail Modal -->
+  <div id="modal-detail" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div id="detail-badge-wrap"></div>
+        <button class="modal-close" onclick="closeModal('modal-detail')">&times;</button>
+      </div>
+      <div class="modal-body" id="detail-body"></div>
+      <div class="modal-footer" id="detail-footer"></div>
+    </div>
+  </div>
+
+  <!-- Claim Submission Modal -->
+  <div id="modal-claim" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Claim Ownership of Item</h3>
+        <button class="modal-close" onclick="closeModal('modal-claim')">&times;</button>
+      </div>
+      <form id="claim-form" class="modal-body">
+        <input type="hidden" id="claim-target-id">
+        <p class="claim-info">To prevent wrongful claims, please describe secret or specific identifying details only the actual owner would know.</p>
+        <div id="claim-question-box" class="question-box"></div>
+        <div class="form-group">
+          <label>Proof of Ownership / Identifying Details *</label>
+          <textarea id="claim-proof" rows="4" placeholder="e.g., Serial number, student roll number, scratch marks, exact wallpaper, contents inside..." required minlength="8"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modal-claim')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Submit Claim Verification</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add Category Modal -->
+  <div id="modal-add-cat" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Add New Category</h3>
+        <button class="modal-close" onclick="closeModal('modal-add-cat')">&times;</button>
+      </div>
+      <form id="add-cat-form" class="modal-body">
+        <div class="form-group">
+          <label>Category Name *</label>
+          <input type="text" id="new-cat-name" placeholder="e.g., Sports Equipment, Jewelry..." required>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modal-add-cat')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Add Category</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Notifications Drawer -->
+  <div id="notif-drawer" class="drawer-overlay">
+    <div class="drawer-box">
+      <div class="drawer-header">
+        <h3>Notifications</h3>
+        <div>
+          <button class="text-btn" onclick="markAllNotificationsRead()">Mark all as read</button>
+          <button class="drawer-close" onclick="closeDrawer()">&times;</button>
+        </div>
+      </div>
+      <div id="notif-list" class="notif-list"></div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

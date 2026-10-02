@@ -1,0 +1,6 @@
+{
+  "name": "Campus Lost & Found",
+  "description": "Centralized college Lost & Found portal to report lost and found items, match belongings, file claims, and contact finders.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

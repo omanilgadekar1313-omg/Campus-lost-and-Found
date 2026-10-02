@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Center badge / shield -->
+    <path
+        android:pathData="M54,26 C64,26 74,29 74,29 L74,51 C74,65 54,77 54,77 C54,77 34,65 34,51 L34,29 C34,29 44,26 54,26 Z"
+        android:fillColor="#4F46E5" />
+
+    <!-- Inner shield highlight -->
+    <path
+        android:pathData="M54,29 C62,29 70,31.5 70,31.5 L70,50 C70,61.5 54,72 54,72 C54,72 38,61.5 38,50 L38,31.5 C38,31.5 46,29 54,29 Z"
+        android:fillColor="#6366F1" />
+
+    <!-- Magnifying Glass rim -->
+    <path
+        android:pathData="M50,38 A12,12 0 1,0 50,62 A12,12 0 1,0 50,38 Z"
+        android:fillColor="#FFFFFF" />
+    <path
+        android:pathData="M50,42 A8,8 0 1,0 50,58 A8,8 0 1,0 50,42 Z"
+        android:fillColor="#4338CA" />
+
+    <!-- Lens glass reflection -->
+    <path
+        android:pathData="M46,45 A5,5 0 0,1 53,45"
+        android:strokeColor="#93C5FD"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round" />
+
+    <!-- Magnifying glass handle -->
+    <path
+        android:pathData="M59,59 L71,71"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="4.5"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M61,61 L69,69"
+        android:strokeColor="#F59E0B"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round" />
+
+    <!-- Found Sparkle / Star -->
+    <path
+        android:pathData="M50,46 L51.2,49.2 L54.4,50.4 L51.2,51.6 L50,54.8 L48.8,51.6 L45.6,50.4 L48.8,49.2 Z"
+        android:fillColor="#FBBF24" />
+
+    <!-- Key emblem on top right -->
+    <path
+        android:pathData="M68,34 A3.5,3.5 0 1,0 71.5,37.5 L75,37.5 L75,40 L77,40 L77,37.5 L78,37.5 L78,34 Z"
+        android:fillColor="#FBBF24" />
+</vector>
